@@ -16,8 +16,8 @@ export default function Home() {
                     className='mx-auto w-auto'
                 />
                 <h2 className='text-4xl text-center mt-6 tracking-tight font-bold text-gray-900'>Sign in to your account</h2>
+                <AuthForm />
             </div>
-            <AuthForm />
         </div>
     )
 }

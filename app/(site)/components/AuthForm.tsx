@@ -3,15 +3,19 @@
 import { useCallback, useState } from "react";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import { BsGithub, BsFillEnvelopeAtFill } from "react-icons/bs";
+import toast, { Toaster } from 'react-hot-toast';
+
 import Input from "@/app/components/inputs/Input";
 import Button from "@/app/components/inputs/Button";
 import AuthSocialButton from "./AuthSocialButton";
+import axios from "axios";
 
 type variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
     const [variant, setVariant] = useState < variant > ('LOGIN');
     const [isLoading, setIsLoading] = useState < boolean > (false);
+
 
     const { register, handleSubmit, formState: { errors } } = useForm < FieldValues > ({
         defaultValues: {
@@ -26,7 +30,20 @@ const AuthForm = () => {
     }, [variant]);
 
     const onsubmit: SubmitHandler<FieldValues> = (data) => {
-        console.log(data);
+        if (variant === "REGISTER") {
+            axios.post('/api/register', data)
+                .then((res) => {
+                    if (res.data.error) {
+                        toast.error(res.data.error);
+                    }
+                })
+                .catch((err) => {
+                    toast.error(err.message);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        }
     }
 
     return (
@@ -34,6 +51,7 @@ const AuthForm = () => {
             <div className="bg-white px-4 py-8 sm:px-10 sm:rounded-lg shadow">
                 <div>
                     <form className="space-y-6" onSubmit={handleSubmit(onsubmit)}>
+                        <Toaster />
                         {
                             variant === 'REGISTER' && (
                                 <Input id="name" label="name" register={register} disabled={isLoading} errors={errors} required />
@@ -62,7 +80,7 @@ const AuthForm = () => {
                         </div>
 
                         <div className="mt-2">
-                            <p className="mt-2 text-sm text-gray-600 text-center"> Already have an account? <button onClick={toggleVariant} className="font-medium text-sky-600 hover:text-sky-500">{variant}</button></p>
+                            <p className="mt-2 text-sm text-gray-600 text-center">{variant === 'LOGIN' ? "Don't have any account? " : " Already have an account? "}<button onClick={toggleVariant} className="font-medium text-sky-600 hover:text-sky-500">{variant}</button></p>
                         </div>
                     </div>
                 </div>
