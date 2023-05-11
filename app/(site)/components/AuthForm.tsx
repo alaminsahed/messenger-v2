@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
 import { BsGithub, BsFillEnvelopeAtFill } from "react-icons/bs";
 import toast, { Toaster } from 'react-hot-toast';
+import { signIn, useSession } from 'next-auth/react';
 
 import Input from "@/app/components/inputs/Input";
 import Button from "@/app/components/inputs/Button";
@@ -44,6 +45,23 @@ const AuthForm = () => {
                     setIsLoading(false);
                 });
         }
+
+        if (variant === "LOGIN") {
+            setIsLoading(true);
+            signIn('credentials', {
+                redirect: false,
+                ...data,
+            }).then((res) => {
+                console.log(res);
+                if (res.error) {
+                    toast.error(res.error);
+                }
+            }).catch((err) => {
+                toast.error(err.message);
+            }).finally(() => {
+                setIsLoading(false);
+            })
+        }
     }
 
     return (
@@ -80,7 +98,7 @@ const AuthForm = () => {
                         </div>
 
                         <div className="mt-2">
-                            <p className="mt-2 text-sm text-gray-600 text-center">{variant === 'LOGIN' ? "Don't have any account? " : " Already have an account? "}<button onClick={toggleVariant} className="font-medium text-sky-600 hover:text-sky-500">{variant}</button></p>
+                            <p className="mt-2 text-sm text-gray-600 text-center">{variant === 'LOGIN' ? "Don't have any account? " : " Already have an account? "}<button onClick={toggleVariant} className="font-medium text-sky-600 hover:text-sky-500">{variant === 'LOGIN' ? 'REGISTER' : 'LOGIN'}</button></p>
                         </div>
                     </div>
                 </div>
