@@ -52,7 +52,7 @@ const AuthForm = () => {
                 redirect: false,
                 ...data,
             }).then((res) => {
-                console.log(res);
+
                 if (res.error) {
                     toast.error(res.error);
                 }
@@ -62,6 +62,21 @@ const AuthForm = () => {
                 setIsLoading(false);
             })
         }
+    }
+
+    const socialAction = (provider: string) => {
+        setIsLoading(true);
+        signIn(provider, { redirect: false }).then((res) => {
+            if (res.error) {
+                toast.error(res.error);
+            }
+
+            if (!res.error && res.ok && res.url) {
+                toast.success('Logged in successfully');
+            }
+        }).catch((err) => {
+            toast.error(err.message);
+        }).finally(() => { setIsLoading(false) });
     }
 
     return (
@@ -91,9 +106,9 @@ const AuthForm = () => {
                             </div>
                         </div>
                         <div className="mt-6 flex gap-2">
-                            <AuthSocialButton Icon={BsGithub} />
+                            <AuthSocialButton Icon={BsGithub} onClick={() => socialAction('github')} />
 
-                            <AuthSocialButton Icon={BsFillEnvelopeAtFill} />
+                            <AuthSocialButton Icon={BsFillEnvelopeAtFill} onClick={() => socialAction('google')} />
 
                         </div>
 
