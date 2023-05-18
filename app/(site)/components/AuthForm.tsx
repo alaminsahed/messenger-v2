@@ -44,6 +44,7 @@ const AuthForm = () => {
           if (res.data.error) {
             toast.error(res.data.error);
           }
+          signIn("credentials", data);
         })
         .catch((err) => {
           toast.error(err.message);
@@ -65,7 +66,7 @@ const AuthForm = () => {
           }
           if (!res.error && res.ok) {
             toast.success("Logged in successfully");
-            router.push("/conversations");
+            router.push("/users");
           }
         })
         .finally(() => {
@@ -96,7 +97,7 @@ const AuthForm = () => {
 
   useEffect(() => {
     if (session?.status === "authenticated") {
-      router.push("/conversations");
+      router.push("/users");
     }
   }, [session?.status, router]);
 
